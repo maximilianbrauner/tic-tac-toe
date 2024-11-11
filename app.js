@@ -1,7 +1,7 @@
-const Gameboard = (() => {
+const Gameboard = () => {
   const rows = 3;
-  const columns = 3;
   const board = [];
+  const columns = 3;
 
   for (let row = 0; row < rows; row++) {
     board[row] = [];
@@ -9,73 +9,68 @@ const Gameboard = (() => {
       board[row][column] = "";
     }
   }
-
   const getBoard = () => board;
 
   const setMove = (row, column, symbol) => {
-    if (
-      row >= 0 &&
-      row < rows &&
-      column >= 0 &&
-      column < columns &&
-      board[row][column] === ""
-    ) {
+    if (board[row][column] === "") {
       board[row][column] = symbol;
+      if (game.checkWinner(symbol)) {
+        console.log(`${symbol} hat gewonnen!`);
+      }
       return true;
     }
     return false;
   };
-
   return { getBoard, setMove };
-})();
+};
 
-const gameController = () => {
-  const gameboard = Gameboard;
-
-  const winningCombinations = [
-    [0, 1, 2], // Rows
-    [3, 4, 5], 
-    [6, 7, 8], 
-    [0, 3, 6], // Columns
-    [1, 4, 7], 
-    [2, 5, 8],
-    [0, 4, 8], // Diagonals
-    [2, 4, 6] 
+const gameController = (gameboard) => {
+  const winningCombinations =  [
+    // Rows
+    [[0, 0], [0, 1], [0, 2]], 
+    [[1, 0], [1, 1], [1, 2]],  
+    [[2, 0], [2, 1], [2, 2]],  
+    // Columns
+    [[0, 0], [1, 0], [2, 0]], 
+    [[0, 1], [1, 1], [2, 1]], 
+    [[0, 2], [1, 2], [2, 2]], 
+    // Diagonals
+    [[0, 0], [1, 1], [2, 2]],
+    [[0, 2], [1, 1], [2, 0]], 
   ];
+
   const checkWinner = (player) => {
     const board = gameboard.getBoard();
-
     for (let i = 0; i < winningCombinations.length; i++) {
       const combination = winningCombinations[i];
       let isWinner = true;
-      for (let j = 0; j < combination.length; j++) {
+
+      for (j = 0; j < combination.length; j++) {
         const [row, column] = combination[j];
-        if (board[row][column] !== player) {
+        if (board[row][column] != player) {
           isWinner = false;
+          break;
         }
       }
-
       if (isWinner) {
         return true;
       }
     }
-
     return false;
   };
-
   return { checkWinner };
 };
 
-const game = gameController();
+const gameboard = Gameboard();  // Erstelle das Gameboard
+const game = gameController(gameboard);  // Erstelle den Gamecontroller und übergebe das Board
 
-Gameboard.setMove(0, 0, "X");
-Gameboard.setMove(0, 1, "X");
-Gameboard.setMove(0, 2, "X");
+gameboard.setMove(0, 0, "X");
+gameboard.setMove(0, 1, "X");
+
+console.log(gameboard.getBoard());
 
 if (game.checkWinner("X")) {
   console.log("X hat gewonnen!");
 } else {
-  console.log("Kein Gewinner");
+  console.log("Kein Gewinner noch.");
 }
-
-console.log(Gameboard.getBoard());
